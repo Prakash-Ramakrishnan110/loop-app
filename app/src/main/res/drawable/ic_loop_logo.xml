@@ -1,0 +1,62 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Underpass Ribbon -->
+    <path
+        android:strokeWidth="5.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M17,18 C13,18 10,20.5 10,24 C10,27.5 13,30 17,30 C21.5,30 22.5,24 24,24 C25.5,24 26.5,30 31,30 C35,30 38,27.5 38,24 C38,20.5 35,18 31,18 C26.5,18 25.5,24 24,24 C22.5,24 21.5,18 17,18 Z">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:angle="0"
+                android:endColor="#0284C7"
+                android:startColor="#1D4ED8"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Front Overpass Layer -->
+    <path
+        android:strokeWidth="5.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M10,24 C10,27.5 13,30 17,30 C21.5,30 22.5,24 24,24 C25.5,24 26.5,30 31,30 C35,30 38,27.5 38,24">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:angle="30"
+                android:endColor="#06B6D4"
+                android:startColor="#3B82F6"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Center Overpass Bridge for 3D Interlock -->
+    <path
+        android:strokeWidth="5.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M21,19 C22,21 24,25 26,28">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:angle="45"
+                android:endColor="#2563EB"
+                android:startColor="#60A5FA"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Crisp Specular Core -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#AAFFFFFF"
+        android:strokeWidth="0.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M17,18 C13,18 10,20.5 10,24 C10,27.5 13,30 17,30 C21.5,30 22.5,24 24,24 C25.5,24 26.5,30 31,30 C35,30 38,27.5 38,24 C38,20.5 35,18 31,18 C26.5,18 25.5,24 24,24 C22.5,24 21.5,18 17,18 Z" />
+
+</vector>

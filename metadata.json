@@ -1,0 +1,6 @@
+{
+  "name": "Loop",
+  "description": "Hyper-local services booking application for home services and event staff with Customer, Provider, and Admin modes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
