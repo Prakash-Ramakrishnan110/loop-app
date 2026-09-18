@@ -108,20 +108,18 @@ fun SplashScreen(
 
                 // Center Icon Emblem
                 Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                    shadowElevation = 8.dp,
+                    shape = RoundedCornerShape(22.dp),
+                    color = Color.Transparent,
+                    shadowElevation = 10.dp,
                     modifier = Modifier
-                        .size(86.dp)
+                        .size(88.dp)
                         .scale(scale)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_loop_logo),
-                            contentDescription = "Loop Logo",
-                            modifier = Modifier.size(56.dp)
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_loop_logo),
+                        contentDescription = "Loop Logo",
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
 

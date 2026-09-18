@@ -672,17 +672,15 @@ fun AuthScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(42.dp)
+                        shape = RoundedCornerShape(10.dp),
+                        color = Color.Transparent,
+                        modifier = Modifier.size(40.dp)
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_loop_logo),
-                                contentDescription = "Loop Logo",
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_loop_logo),
+                            contentDescription = "Loop Logo",
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {

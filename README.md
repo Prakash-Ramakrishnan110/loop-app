@@ -13,17 +13,29 @@ The platform unites three core portals in an interconnected ecosystem:
 
 ---
 
-## 🎨 Design System
+## 🎨 Design System & Brand Logo
 
-- **Primary Brand Color**: `#2E75B6` (Classic Deep Blue)
-- **Primary Dark**: `#1F4E79`
-- **Accent**: `#F59E0B` (Warm Amber/Gold)
-- **Success / Verified**: `#22C55E`
+- **Primary Brand Color**: `#2E75B6` (Trust Blue)
+- **Primary Dark**: `#1F4E79` (Deep Harbor Navy)
+- **Favor Spark Orange**: `#F4A261` (Warm Community Token)
+- **Time Credit Green**: `#34A853` (Verified Escrow Token)
+- **Loop Ribbon**: `#FFFFFF` (Continuous Reciprocal Infinity)
 - **Background**: `#F8FAFC` (Light) / `#0F172A` (Dark)
 - **Cards**: `#FFFFFF` / `#1E293B`
 - **Corner Radii**: 12dp – 16dp rounded cards with soft tonal elevations
 - **Typography**: Responsive Material 3 Typography system with high contrast readability
 - **Bilingual**: One-tap toggle between **English** and **Hindi (हिंदी)**
+
+### 💎 Brand Logo & Asset Paths
+Full brand guidelines and vector specifications are documented in **[LOGO_README.md](LOGO_README.md)**.
+
+- **Standalone Vector SVG**: `/loop_logo.svg` & `/app/src/main/assets/loop_logo.svg`
+- **Android In-App Vector**: `/app/src/main/res/drawable/ic_loop_logo.xml`
+- **Adaptive Foreground**: `/app/src/main/res/drawable/ic_launcher_foreground.xml`
+- **Adaptive Background**: `/app/src/main/res/drawable/ic_launcher_background.xml`
+- **Monochrome Themed Icon**: `/app/src/main/res/drawable/ic_launcher_monochrome.xml`
+- **Google Play Store Launch Icon (512x512)**: `/app/src/main/playstore-icon.png` & `/app/src/main/ic_launcher-web.png`
+- **Mipmap Density Icons**: `/app/src/main/res/mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}/ic_launcher.png`
 
 ---
 

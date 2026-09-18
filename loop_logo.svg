@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- Background Linear Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E75B6" />
+      <stop offset="100%" stop-color="#1F4E79" />
+    </linearGradient>
+    
+    <!-- Subtle Glow / Drop Shadow -->
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background Tile (108x108 viewport with rounded squircle / radius 24) -->
+  <rect width="108" height="108" rx="24" fill="url(#bgGrad)" />
+
+  <!-- Subtle Concentric Orbit Rings (Community & Proximity) -->
+  <circle cx="54" cy="54" r="42" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="1" />
+  <circle cx="54" cy="54" r="28" fill="none" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1" />
+
+  <!-- Infinity Ribbon Path (Continuous Reciprocal Exchange) -->
+  <path
+    d="M38,42 C30,42 26,48 26,54 C26,60 30,66 38,66 C46,66 50,58 54,54 C58,50 62,42 70,42 C78,42 82,48 82,54 C82,60 78,66 70,66 C62,66 58,58 54,54 C50,50 46,42 38,42 Z"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="6.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#softShadow)"
+  />
+
+  <!-- Left Node: Favor Spark / Warm Orange Token -->
+  <circle cx="38" cy="54" r="4.5" fill="#F4A261" />
+
+  <!-- Right Node: Time Credit / Emerald Green Token -->
+  <circle cx="70" cy="54" r="4.5" fill="#34A853" />
+</svg>
