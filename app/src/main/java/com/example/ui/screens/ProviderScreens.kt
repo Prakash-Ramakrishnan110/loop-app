@@ -286,7 +286,12 @@ fun ProviderDashboardScreen(
                         Text("Completed Jobs", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(4.dp))
                         Text("${myProvider.completedJobs}", fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
-                        Text("★ ${myProvider.rating} Rating", fontSize = 10.sp, color = LoopAccent, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Star, contentDescription = null, tint = LoopAccent, modifier = Modifier.size(12.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("${myProvider.rating} Rating", fontSize = 10.sp, color = LoopAccent, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { padding: 0; margin: 0; }
+        html, body, #map { height: 100vh; width: 100vw; }
+        .confirm-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: #0284C7;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <button class="confirm-btn" onclick="confirmLocation()">Confirm Location</button>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize map centered roughly on a default location
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Add a draggable marker
+        var marker = L.marker([51.505, -0.09], {draggable: true}).addTo(map);
+
+        // Try to get user's location
+        map.locate({setView: true, maxZoom: 16});
+        map.on('locationfound', function(e) {
+            marker.setLatLng(e.latlng);
+        });
+
+        // When marker is dragged, update its position
+        marker.on('dragend', function(e) {
+            var position = marker.getLatLng();
+            map.panTo(position);
+        });
+
+        // When map is clicked, move marker to that point
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            map.panTo(e.latlng);
+        });
+
+        function confirmLocation() {
+            var position = marker.getLatLng();
+            if (window.AndroidInterface) {
+                window.AndroidInterface.onLocationSelected(position.lat, position.lng);
+            } else {
+                console.log("Location confirmed: ", position.lat, position.lng);
+            }
+        }
+    </script>
+</body>
+</html>

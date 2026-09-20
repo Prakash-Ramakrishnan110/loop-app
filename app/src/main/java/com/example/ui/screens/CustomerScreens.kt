@@ -570,12 +570,16 @@ fun CustomerHomeScreen(
                         text = if (isHindi) "सत्यापित प्रोफेशनल्स" else "Verified Professionals",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                    Text(
-                        text = "⚡ Hyper-Local",
-                        color = Color(0xFFD97706),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.FlashOn, contentDescription = null, tint = Color(0xFFD97706), modifier = Modifier.size(14.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Hyper-Local",
+                            color = Color(0xFFD97706),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -754,7 +758,7 @@ fun CategoryListingScreen(
                 FilterChip(
                     selected = filterRating,
                     onClick = { filterRating = true },
-                    label = { Text("Top Rated (4.8+ ★)") }
+                    label = { Text("Top Rated (4.8+)") }
                 )
             }
 

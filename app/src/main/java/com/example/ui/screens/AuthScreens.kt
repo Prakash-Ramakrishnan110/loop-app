@@ -31,598 +31,242 @@ import com.example.data.*
 import com.example.ui.theme.*
 
 // -------------------------------------------------------------
-// 1. THREE-STEP ONBOARDING SCREENS (Value Propositions)
+// 1. ONBOARDING SCREENS (Role Selection + Value Props)
 // -------------------------------------------------------------
 @Composable
 fun AppOnboardingScreen(
-    onFinish: () -> Unit
+    onFinish: (UserRole) -> Unit
 ) {
+    var selectedRole by remember { mutableStateOf<UserRole?>(null) }
     var currentPage by remember { mutableIntStateOf(0) }
 
     data class OnboardingSlide(
         val title: String,
         val subtitle: String,
-        val categoryTag: String,
         val icon: ImageVector,
-        val accentColor: Color,
-        val benefits: List<Pair<String, String>>,
-        val visualType: String // "hyperlocal", "verified", "seamless"
+        val accentColor: Color
     )
 
-    val slides = listOf(
-        OnboardingSlide(
-            title = "Hyper-Local Services",
-            subtitle = "Certified household specialists and wedding event crew dispatched right from your neighborhood in minutes.",
-            categoryTag = "STEP 1 OF 3 • SPEED & PROXIMITY",
-            icon = Icons.Default.NearMe,
-            accentColor = Color(0xFF0284C7),
-            benefits = listOf(
-                "⚡ Rapid ~15 Min Arrival" to "Real neighborhood pros located within 3 km of your home for emergency fixes.",
-                "🛠️ Home & Event Staffing" to "Plumbers, electricians, cleaners, and 1 to 20+ banquet crew on demand.",
-                "📍 Proximity Match Engine" to "Dispatches the closest top-rated expert to cut your wait time."
+    val slides = if (selectedRole == UserRole.CUSTOMER) {
+        listOf(
+            OnboardingSlide(
+                title = "Find Local Pros Instantly",
+                subtitle = "Connect with top-rated household specialists and event crew in your neighborhood.",
+                icon = Icons.Default.NearMe,
+                accentColor = Color(0xFF0284C7)
             ),
-            visualType = "hyperlocal"
-        ),
-        OnboardingSlide(
-            title = "Verified Professionals",
-            subtitle = "Every service partner undergoes strict government ID authentication, police verification, and skills assessment.",
-            categoryTag = "STEP 2 OF 3 • SAFETY & TRUST",
-            icon = Icons.Default.VerifiedUser,
-            accentColor = Color(0xFF16A34A),
-            benefits = listOf(
-                "🛡️ 100% Aadhaar & Police Screened" to "Zero compromise on home security; complete identity background audits.",
-                "📸 Before & After Photo Proofs" to "Inspect previous job quality and work results before confirming.",
-                "⭐ Authentic Verified Reviews" to "Community-driven ratings from real neighborhood service completions."
-            ),
-            visualType = "verified"
-        ),
-        OnboardingSlide(
-            title = "Seamless Booking",
-            subtitle = "Book in 3 simple taps with transparent rate cards, live turn-by-turn GPS tracking, and secure digital payments.",
-            categoryTag = "STEP 3 OF 3 • EFFORTLESS EXPERIENCE",
-            icon = Icons.Default.TouchApp,
-            accentColor = Color(0xFFD97706),
-            benefits = listOf(
-                "💰 Upfront Surge-Free Rates" to "Transparent GST billing with standard rate cards and zero hidden fees.",
-                "🗺️ Live Turn-by-Turn GPS" to "Track your technician's live route on an interactive map in real time.",
-                "💳 Razorpay Escrow Payments" to "Pay safely via UPI, Cards, or Pay-After-Service with full buyer protection."
-            ),
-            visualType = "seamless"
+            OnboardingSlide(
+                title = "Verified & Secure",
+                subtitle = "All professionals are background-checked. Enjoy secure escrow payments and upfront pricing.",
+                icon = Icons.Default.Shield,
+                accentColor = Color(0xFF16A34A)
+            )
         )
-    )
+    } else {
+        listOf(
+            OnboardingSlide(
+                title = "Find Jobs Near You",
+                subtitle = "Discover available jobs in your neighborhood and get hired instantly.",
+                icon = Icons.Default.Work,
+                accentColor = Color(0xFFD97706)
+            ),
+            OnboardingSlide(
+                title = "Guaranteed Payments",
+                subtitle = "Get paid securely and on time directly to your bank account after every job.",
+                icon = Icons.Default.AccountBalanceWallet,
+                accentColor = Color(0xFF16A34A)
+            )
+        )
+    }
 
-    val currentSlide = slides[currentPage.coerceIn(0, slides.size - 1)]
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Top Header: Logo + Skip Affordance
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    if (selectedRole == null) {
+        // ROLE SELECTION SCREEN
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    shape = CircleShape,
-                    color = currentSlide.accentColor.copy(alpha = 0.15f),
-                    modifier = Modifier.size(32.dp)
+            Image(
+                painter = painterResource(id = R.drawable.ic_loop_logo),
+                contentDescription = "Loop Logo",
+                modifier = Modifier.size(80.dp).clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "Welcome to Loop",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "How would you like to use the app?",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+            )
+
+            Card(
+                onClick = { selectedRole = UserRole.CUSTOMER },
+                modifier = Modifier.fillMaxWidth().height(100.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.AllInclusive,
-                            contentDescription = null,
-                            tint = currentSlide.accentColor,
-                            modifier = Modifier.size(18.dp)
-                        )
+                    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(12.dp))
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        Text("I want to Hire", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Find professionals for your needs", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "LOOP",
-                    fontWeight = FontWeight.Black,
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    letterSpacing = 1.sp
-                )
             }
 
-            TextButton(onClick = onFinish) {
-                Text(
-                    text = "Skip to Sign In",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Card(
+                onClick = { selectedRole = UserRole.PROVIDER },
+                modifier = Modifier.fillMaxWidth().height(100.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(2.dp, Color(0xFFD97706).copy(alpha = 0.5f))
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(shape = CircleShape, color = Color(0xFFD97706).copy(alpha = 0.1f), modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Default.Handyman, contentDescription = null, tint = Color(0xFFD97706), modifier = Modifier.padding(12.dp))
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        Text("I want to Work", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Offer services and earn money", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
             }
         }
+    } else {
+        // ONBOARDING SLIDES
+        val currentSlide = slides[currentPage.coerceIn(0, slides.size - 1)]
 
-        // Center Content Area with Animated Transition
-        AnimatedContent(
-            targetState = currentPage,
-            transitionSpec = {
-                if (targetState > initialState) {
-                    (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
-                        slideOutHorizontally { width -> -width } + fadeOut()
-                    )
-                } else {
-                    (slideInHorizontally { width -> -width } + fadeIn()).togetherWith(
-                        slideOutHorizontally { width -> width } + fadeOut()
-                    )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = { onFinish(selectedRole!!) }) {
+                    Text("Skip", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 }
-            },
-            label = "OnboardingSlideAnimation"
-        ) { page ->
-            val slide = slides[page]
+            }
+
+            // Content
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Step Tag Chip
+                Image(
+                    painter = painterResource(id = R.drawable.ic_loop_logo),
+                    contentDescription = "Loop Logo",
+                    modifier = Modifier.size(120.dp).clip(CircleShape)
+                )
+                
+                Spacer(modifier = Modifier.height(40.dp))
+                
                 Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = slide.accentColor.copy(alpha = 0.12f),
-                    border = BorderStroke(1.dp, slide.accentColor.copy(alpha = 0.3f))
+                    shape = CircleShape,
+                    color = currentSlide.accentColor.copy(alpha = 0.1f),
+                    modifier = Modifier.size(64.dp)
                 ) {
-                    Text(
-                        text = slide.categoryTag,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Black,
-                        color = slide.accentColor,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                    Icon(
+                        imageVector = currentSlide.icon,
+                        contentDescription = null,
+                        tint = currentSlide.accentColor,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // Custom Graphic Container based on Value Proposition
-                when (slide.visualType) {
-                    "hyperlocal" -> {
-                        HyperLocalVisualContainer(accentColor = slide.accentColor)
-                    }
-                    "verified" -> {
-                        VerifiedVisualContainer(accentColor = slide.accentColor)
-                    }
-                    else -> {
-                        SeamlessVisualContainer(accentColor = slide.accentColor)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Headline & Subtitle
                 Text(
-                    text = slide.title,
+                    text = currentSlide.title,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = slide.subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = currentSlide.subtitle,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    lineHeight = 20.sp
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Benefit Cards
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f))
-                ) {
-                    Column(
-                        modifier = Modifier.padding(14.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        slide.benefits.forEach { (heading, desc) ->
-                            Row(verticalAlignment = Alignment.Top) {
-                                Surface(
-                                    shape = CircleShape,
-                                    color = slide.accentColor.copy(alpha = 0.15f),
-                                    modifier = Modifier.size(20.dp)
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.Check,
-                                            contentDescription = null,
-                                            tint = slide.accentColor,
-                                            modifier = Modifier.size(12.dp)
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Column {
-                                    Text(
-                                        text = heading,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Text(
-                                        text = desc,
-                                        fontSize = 11.sp,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        lineHeight = 15.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
             }
-        }
 
-        // Bottom Navigation: Indicator Dots & CTA Button
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Interactive Page Indicator Dots
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 16.dp)
+            // Footer
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                repeat(slides.size) { idx ->
-                    val isSelected = currentPage == idx
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .height(6.dp)
-                            .width(if (isSelected) 28.dp else 7.dp)
-                            .clip(RoundedCornerShape(3.dp))
-                            .background(
-                                if (isSelected) currentSlide.accentColor
-                                else MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
-                            )
-                            .clickable { currentPage = idx }
-                    )
-                }
-            }
-
-            // Primary Action Button
-            Button(
-                onClick = {
-                    if (currentPage < slides.size - 1) {
-                        currentPage++
-                    } else {
-                        onFinish()
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = currentSlide.accentColor)
-            ) {
-                Text(
-                    text = if (currentPage == slides.size - 1) "Get Started & Sign In" else "Next Value Proposition",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Secondary Quick Sign-In Button
-            TextButton(onClick = onFinish) {
-                Text(
-                    text = "Already have an account? Sign In",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-    }
-}
-
-// -------------------------------------------------------------
-// VISUAL CONTAINERS FOR THE 3 ONBOARDING SCREENS
-// -------------------------------------------------------------
-
-@Composable
-private fun HyperLocalVisualContainer(accentColor: Color) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = accentColor.copy(alpha = 0.08f),
-        border = BorderStroke(1.5.dp, accentColor.copy(alpha = 0.25f)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = accentColor,
-                    modifier = Modifier.size(36.dp)
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.NearMe,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFE0F2FE),
-                    border = BorderStroke(1.dp, Color(0xFF0284C7).copy(alpha = 0.4f))
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                    ) {
+                    repeat(slides.size) { idx ->
+                        val isSelected = currentPage == idx
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF0284C7))
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "⚡ Reaches in ~15 mins (1.2 km away)",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0369A1)
+                                .padding(horizontal = 4.dp)
+                                .height(8.dp)
+                                .width(if (isSelected) 32.dp else 8.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(
+                                    if (isSelected) currentSlide.accentColor
+                                    else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                                )
                         )
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Service tags pill row
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                listOf("🔧 Plumber", "⚡ Electrician", "🧹 Deep Clean", "👥 Event Waiters").forEach { tag ->
-                    Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = MaterialTheme.colorScheme.surface,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                    ) {
-                        Text(
-                            text = tag,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun VerifiedVisualContainer(accentColor: Color) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = accentColor.copy(alpha = 0.08f),
-        border = BorderStroke(1.5.dp, accentColor.copy(alpha = 0.25f)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = accentColor,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Shield,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Surface(
+                Button(
+                    onClick = {
+                        if (currentPage < slides.size - 1) {
+                            currentPage++
+                        } else {
+                            onFinish(selectedRole!!)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFDCFCE7),
-                    border = BorderStroke(1.dp, Color(0xFF16A34A).copy(alpha = 0.4f))
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = Color(0xFF16A34A),
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Aadhaar & Police Verified Pro",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF15803D)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                    colors = ButtonDefaults.buttonColors(containerColor = currentSlide.accentColor)
                 ) {
                     Text(
-                        text = "⭐ 4.9 Rating (120+ Jobs)",
-                        fontSize = 10.sp,
+                        text = if (currentPage == slides.size - 1) "Get Started" else "Next",
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFFD97706),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                    )
-                }
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                ) {
-                    Text(
-                        text = "📸 Photo Proofs Verified",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SeamlessVisualContainer(accentColor: Color) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = accentColor.copy(alpha = 0.08f),
-        border = BorderStroke(1.5.dp, accentColor.copy(alpha = 0.25f)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = accentColor,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.TouchApp,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFFEF3C7),
-                    border = BorderStroke(1.dp, Color(0xFFD97706).copy(alpha = 0.4f))
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Navigation,
-                            contentDescription = null,
-                            tint = Color(0xFFD97706),
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Live GPS: En Route (ETA 8 mins)",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFB45309)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                ) {
-                    Text(
-                        text = "🏷️ Upfront GST Rate Card",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                    )
-                }
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                ) {
-                    Text(
-                        text = "🔒 Razorpay Escrow UPI",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF16A34A),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                        fontSize = 16.sp,
+                        color = Color.White
                     )
                 }
             }
@@ -633,8 +277,8 @@ private fun SeamlessVisualContainer(accentColor: Color) {
 // Retain DualTrackOnboardingScreen alias for backwards compatibility
 @Composable
 fun DualTrackOnboardingScreen(
-    onFinish: () -> Unit,
-    onOpenLogin: () -> Unit = onFinish
+    onFinish: (UserRole) -> Unit,
+    onOpenLogin: () -> Unit = { onFinish(UserRole.CUSTOMER) }
 ) {
     AppOnboardingScreen(onFinish = onFinish)
 }
@@ -644,12 +288,15 @@ fun DualTrackOnboardingScreen(
 // -------------------------------------------------------------
 @Composable
 fun AuthScreen(
+    initialRole: UserRole,
     onOpenOnboarding: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onRegistrationRequested: (UserRole, String, String) -> Unit = { _, _, _ -> }
 ) {
     var phone by remember { mutableStateOf("9876543210") }
     var name by remember { mutableStateOf("Rahul Sharma") }
-    var selectedRole by remember { mutableStateOf(UserRole.CUSTOMER) }
+    // Use the role passed from Onboarding
+    val selectedRole = initialRole
     var showOtp by remember { mutableStateOf(false) }
     var otpCode by remember { mutableStateOf("4819") }
     var showMoreDemoRoles by remember { mutableStateOf(false) }
@@ -672,14 +319,14 @@ fun AuthScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
-                        shape = RoundedCornerShape(10.dp),
+                        shape = CircleShape,
                         color = Color.Transparent,
                         modifier = Modifier.size(40.dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_loop_logo),
                             contentDescription = "Loop Logo",
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize().clip(CircleShape)
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
@@ -733,7 +380,7 @@ fun AuthScreen(
                     // State Headline
                     if (!showOtp) {
                         Text(
-                            text = "Sign In with Mobile",
+                            text = if (selectedRole == UserRole.CUSTOMER) "Sign In to Hire" else "Sign In to Work",
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -743,47 +390,6 @@ fun AuthScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp, bottom = 14.dp)
                         )
-
-                        // Role Selection Tabs
-                        Text(
-                            text = "I WANT TO JOIN AS:",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            letterSpacing = 0.5.sp
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            FilterChip(
-                                selected = selectedRole == UserRole.CUSTOMER,
-                                onClick = { selectedRole = UserRole.CUSTOMER },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Person,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                },
-                                label = { Text("Customer (Hire)", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-                                modifier = Modifier.weight(1f)
-                            )
-                            FilterChip(
-                                selected = selectedRole == UserRole.PROVIDER,
-                                onClick = { selectedRole = UserRole.PROVIDER },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Handyman,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                },
-                                label = { Text("Provider (Earn)", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
 
                         Spacer(modifier = Modifier.height(14.dp))
 
@@ -1002,12 +608,8 @@ fun AuthScreen(
                         Button(
                             onClick = {
                                 if (otpCode.length == 4) {
-                                    LoopRepository.login(
-                                        phone = "+91 $phone",
-                                        name = name.ifBlank { "User" },
-                                        role = selectedRole
-                                    )
-                                    onLoginSuccess()
+                                    // Navigate to Registration Screen for new users
+                                    onRegistrationRequested(selectedRole, name.ifBlank { "User" }, "+91 $phone")
                                 }
                             },
                             enabled = otpCode.length == 4,
@@ -1410,6 +1012,310 @@ fun DemoAccountCard(
                 )
             ) {
                 Text("Login", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------
+// 3. REGISTRATION SCREEN (After OTP)
+// -------------------------------------------------------------
+@Composable
+fun RegistrationScreen(
+    initialRole: UserRole,
+    initialName: String,
+    initialPhone: String,
+    onRegistrationComplete: () -> Unit
+) {
+    if (initialRole == UserRole.CUSTOMER) {
+        CustomerRegistrationWizard(initialName, initialPhone, onRegistrationComplete)
+    } else {
+        ProviderRegistrationWizard(initialName, initialPhone, onRegistrationComplete)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomerRegistrationWizard(
+    initialName: String,
+    initialPhone: String,
+    onComplete: () -> Unit
+) {
+    var step by remember { mutableIntStateOf(0) }
+    
+    // Form state
+    var name by remember { mutableStateOf(initialName) }
+    var email by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var lat by remember { mutableDoubleStateOf(0.0) }
+    var lng by remember { mutableDoubleStateOf(0.0) }
+    
+    val totalSteps = 4
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LinearProgressIndicator(
+            progress = (step + 1) / totalSteps.toFloat(),
+            modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Crossfade(targetState = step, label = "CustomerWizard") { currentStep ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                when (currentStep) {
+                    0 -> {
+                        Text("Personal Details", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(
+                            modifier = Modifier.size(100.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.PersonOutline, contentDescription = null, modifier = Modifier.size(40.dp))
+                            Text("Add Photo", fontSize = 10.sp, modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp))
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Full Name") }, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email Address") }, modifier = Modifier.fillMaxWidth())
+                    }
+                    1 -> {
+                        Text("Exact Location", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Text("Drag the pin to your home", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(modifier = Modifier.fillMaxWidth().height(250.dp).clip(RoundedCornerShape(12.dp))) {
+                            com.example.ui.components.LeafletMapView(
+                                onLocationSelected = { l, lg -> lat = l; lng = lg }
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Apt / Suite Number") }, modifier = Modifier.fillMaxWidth())
+                    }
+                    2 -> {
+                        Text("Service Preferences", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        val services = listOf("Cleaning", "Plumbing", "Electrical", "Handyman", "Events", "Moving")
+                        var selected by remember { mutableStateOf(setOf<String>()) }
+                        Column {
+                            services.chunked(2).forEach { rowItems ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                                    rowItems.forEach { item ->
+                                        FilterChip(
+                                            selected = selected.contains(item),
+                                            onClick = { if (selected.contains(item)) selected -= item else selected += item },
+                                            label = { Text(item) },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    3 -> {
+                        Text("Payment Setup", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Text("Add a card to book instantly", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Card(
+                            modifier = Modifier.fillMaxWidth().height(180.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            Column(modifier = Modifier.padding(24.dp).fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+                                Icon(Icons.Default.CreditCard, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.size(32.dp))
+                                Text("**** **** **** 1234", fontSize = 20.sp, letterSpacing = 2.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Text(name.ifBlank { "Cardholder Name" }, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                    Text("MM/YY", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {}, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
+                            Text("Link Card Securely")
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            if (step > 0) {
+                OutlinedButton(onClick = { step-- }, modifier = Modifier.weight(1f)) { Text("Back") }
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+            Button(
+                onClick = {
+                    if (step < totalSteps - 1) step++ 
+                    else {
+                        LoopRepository.login(phone = initialPhone, name = name, role = UserRole.CUSTOMER)
+                        onComplete()
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(if (step < totalSteps - 1) "Next" else "Finish")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProviderRegistrationWizard(
+    initialName: String,
+    initialPhone: String,
+    onComplete: () -> Unit
+) {
+    var step by remember { mutableIntStateOf(0) }
+    val totalSteps = 5
+    
+    // State
+    var name by remember { mutableStateOf(initialName) }
+    var email by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+    var profession by remember { mutableStateOf("") }
+    var rate by remember { mutableStateOf("") }
+    var experience by remember { mutableStateOf(1f) }
+    var availability by remember { mutableStateOf(setOf<String>()) }
+    var lat by remember { mutableDoubleStateOf(0.0) }
+    var lng by remember { mutableDoubleStateOf(0.0) }
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LinearProgressIndicator(
+            progress = (step + 1) / totalSteps.toFloat(),
+            modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Crossfade(targetState = step, label = "ProviderWizard") { currentStep ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                when (currentStep) {
+                    0 -> {
+                        Text("Professional Profile", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(
+                            modifier = Modifier.size(100.dp).background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.CameraAlt, contentDescription = null, modifier = Modifier.size(40.dp))
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Full Name") }, modifier = Modifier.fillMaxWidth())
+                        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Business Email") }, modifier = Modifier.fillMaxWidth())
+                        OutlinedTextField(value = bio, onValueChange = { bio = it }, label = { Text("Short Bio") }, modifier = Modifier.fillMaxWidth().height(100.dp), maxLines = 3)
+                    }
+                    1 -> {
+                        Text("Expertise & Pricing", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        var expanded by remember { mutableStateOf(false) }
+                        val professions = listOf("Plumber", "Carpenter", "Electrician", "Event Staff", "Maid", "Driver")
+                        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+                            OutlinedTextField(value = profession, onValueChange = {}, readOnly = true, label = { Text("Primary Trade") }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) }, modifier = Modifier.fillMaxWidth().menuAnchor())
+                            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                                professions.forEach { selectionOption ->
+                                    DropdownMenuItem(text = { Text(selectionOption) }, onClick = { profession = selectionOption; expanded = false })
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Years of Experience: ${experience.toInt()}", modifier = Modifier.align(Alignment.Start))
+                        Slider(value = experience, onValueChange = { experience = it }, valueRange = 0f..20f)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedTextField(value = rate, onValueChange = { rate = it }, label = { Text("Hourly Rate ($)") }, modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                    }
+                    2 -> {
+                        Text("Availability", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Text("When do you typically work?", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        val times = listOf("Weekdays", "Weekends", "Mornings", "Afternoons", "Evenings", "Nights")
+                        Column {
+                            times.chunked(2).forEach { rowItems ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                                    rowItems.forEach { item ->
+                                        FilterChip(
+                                            selected = availability.contains(item),
+                                            onClick = { if (availability.contains(item)) availability -= item else availability += item },
+                                            label = { Text(item) },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    3 -> {
+                        Text("Service Area", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Text("Pinpoint your base location", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Box(modifier = Modifier.fillMaxWidth().height(250.dp).clip(RoundedCornerShape(12.dp))) {
+                            com.example.ui.components.LeafletMapView(
+                                onLocationSelected = { l, lg -> lat = l; lng = lg }
+                            )
+                        }
+                    }
+                    4 -> {
+                        Text("Verification", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+                        Text("We require ID verification to build trust.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = {},
+                            modifier = Modifier.fillMaxWidth().height(60.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+                        ) {
+                            Icon(Icons.Default.UploadFile, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Upload Government ID or License")
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            var checked by remember { mutableStateOf(false) }
+                            Checkbox(checked = checked, onCheckedChange = { checked = it })
+                            Text("I consent to a background check.", fontSize = 14.sp)
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            if (step > 0) {
+                OutlinedButton(onClick = { step-- }, modifier = Modifier.weight(1f)) { Text("Back") }
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+            Button(
+                onClick = {
+                    if (step < totalSteps - 1) step++ 
+                    else {
+                        LoopRepository.login(phone = initialPhone, name = name, role = UserRole.PROVIDER)
+                        onComplete()
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(if (step < totalSteps - 1) "Next" else "Finish")
             }
         }
     }
