@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
@@ -61,6 +63,17 @@ fun SplashScreen(
         label = "GlowAlpha"
     )
 
+    // Entry animation
+    val entryAlpha = remember { Animatable(0f) }
+    val entryOffsetY = remember { Animatable(40f) }
+
+    LaunchedEffect(Unit) {
+        entryAlpha.animateTo(1f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+    }
+    LaunchedEffect(Unit) {
+        entryOffsetY.animateTo(0f, animationSpec = tween(800, easing = FastOutSlowInEasing))
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -82,33 +95,19 @@ fun SplashScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = entryOffsetY.value.dp)
+                .graphicsLayer(alpha = entryAlpha.value)
         ) {
             // Glowing pulsing logo container
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.size(160.dp)
             ) {
-                // Outer Glow ring
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = glowAlpha),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .scale(scale * 1.08f)
-                ) {}
-
-                // Mid ring
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
-                    modifier = Modifier.size(120.dp)
-                ) {}
-
                 // Center Icon Emblem
                 Surface(
-                    shape = RoundedCornerShape(22.dp),
+                    shape = CircleShape,
                     color = Color.Transparent,
                     shadowElevation = 10.dp,
                     modifier = Modifier
@@ -118,7 +117,7 @@ fun SplashScreen(
                     Image(
                         painter = painterResource(id = R.drawable.ic_loop_logo),
                         contentDescription = "Loop Logo",
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize().clip(CircleShape)
                     )
                 }
             }

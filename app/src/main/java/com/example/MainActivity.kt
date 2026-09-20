@@ -187,10 +187,11 @@ fun CustomerFlowContainer(
         Box(modifier = Modifier.padding(padding)) {
             when (currentScreen) {
                 is Screen.Onboarding -> {
-                    AppOnboardingScreen(onFinish = { onBack() })
+                    AppOnboardingScreen(onFinish = { role -> onNavigate(Screen.Login) })
                 }
                 is Screen.Login -> {
                     AuthScreen(
+                        initialRole = UserRole.CUSTOMER,
                         onOpenOnboarding = { onNavigate(Screen.Onboarding) },
                         onLoginSuccess = { onBack() }
                     )
